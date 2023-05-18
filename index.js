@@ -34,13 +34,6 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/toys/:id", async (req, res) => {
-      const toy = await toyCollection.findOne({
-        _id: new ObjectId(req.params.id),
-      });
-      res.send(toy);
-    });
-
     app.get("/toys/:email", async (req, res) => {
       const toys = await toyCollection
         .find({
@@ -49,6 +42,14 @@ async function run() {
         .toArray();
       res.send(toys);
     });
+
+    app.get("/toys/:id", async (req, res) => {
+      const toy = await toyCollection.findOne({
+        _id: new ObjectId(req.params.id),
+      });
+      res.send(toy);
+    });
+
     app.post("/addToys", async (req, res) => {
       const addToys = req.body;
       console.log(addToys);
