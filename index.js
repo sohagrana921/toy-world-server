@@ -25,7 +25,6 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-
     const toyCollection = client.db("toyWorld").collection("toys");
 
     app.get("/toys", async (req, res) => {
@@ -50,6 +49,7 @@ async function run() {
         .toArray();
       res.send(toys);
     });
+
     app.get("/toyname/:name", async (req, res) => {
       const toys = await toyCollection
         .find({
@@ -66,16 +66,16 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/updateToy/:id", async (req, res) => {
+    app.patch("/toys/:id", async (req, res) => {
       const id = req.params.id;
-      const body = req.body;
-      console.log(body);
       const filter = { _id: new ObjectId(id) };
+      const updatedToy = req.body;
+      console.log(updatedBooking);
       const updateDoc = {
         $set: {
-          price: body.price,
-          quantity: body.quantity,
-          details: body.details,
+          price: updatedToy.price,
+          quantity: updatedToy.quantity,
+          details: updatedToy.details,
         },
       };
       const result = await toyCollection.updateOne(filter, updateDoc);
