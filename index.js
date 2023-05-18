@@ -29,8 +29,16 @@ async function run() {
     const toyCollection = client.db("toyWorld").collection("toys");
 
     app.get("/toys", async (req, res) => {
-      const cursor = toyCollection.find();
+      const limit = 20;
+      const cursor = toyCollection.find().limit(limit);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.findOne(query);
       res.send(result);
     });
 
@@ -42,12 +50,13 @@ async function run() {
         .toArray();
       res.send(toys);
     });
-
-    app.get("/toys/:id", async (req, res) => {
-      const toy = await toyCollection.findOne({
-        _id: new ObjectId(req.params.id),
-      });
-      res.send(toy);
+    app.get("/toyname/:name", async (req, res) => {
+      const toys = await toyCollection
+        .find({
+          toyName: req.params.name,
+        })
+        .toArray();
+      res.send(toys);
     });
 
     app.post("/addToys", async (req, res) => {
