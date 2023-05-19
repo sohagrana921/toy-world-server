@@ -59,6 +59,15 @@ async function run() {
       res.send(toys);
     });
 
+    app.get("/allToyByCategory/:category", async (req, res) => {
+      const jobs = await toyCollection
+        .find({
+          subCategory: req.params.category,
+        })
+        .toArray();
+      res.send(jobs);
+    });
+
     app.post("/addToys", async (req, res) => {
       const addToys = req.body;
       console.log(addToys);
