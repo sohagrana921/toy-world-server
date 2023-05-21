@@ -26,7 +26,6 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toyCollection = client.db("toyWorld").collection("toys");
-
     app.get("/toys", async (req, res) => {
       const limit = 20;
       const cursor = toyCollection.find().limit(limit);
@@ -42,21 +41,23 @@ async function run() {
     });
 
     app.get("/toy/:email", async (req, res) => {
+      const { sort } = req.query;
+      const sortOrder = sort === "ascending" ? 1 : -1;
       const toys = await toyCollection
         .find({
           sellerEmail: req.params.email,
         })
+        .sort({ price: sortOrder })
         .toArray();
       res.send(toys);
     });
-
-    app.get("/toyname/:name", async (req, res) => {
-      const toys = await toyCollection
+    app.get("/toyname/:text", async (req, res) => {
+      const result = await toyCollection
         .find({
-          toyName: req.params.name,
+          subCategory: req.params.text,
         })
         .toArray();
-      res.send(toys);
+      res.send(result);
     });
 
     app.get("/allToyByCategory/:category", async (req, res) => {
@@ -70,21 +71,19 @@ async function run() {
 
     app.post("/addToys", async (req, res) => {
       const addToys = req.body;
-      console.log(addToys);
       const result = await toyCollection.insertOne(addToys);
       res.send(result);
     });
 
-    app.patch("/toys/:id", async (req, res) => {
+    app.put("/updateToy/:id", async (req, res) => {
       const id = req.params.id;
+      const body = req.body;
       const filter = { _id: new ObjectId(id) };
-      const updatedToy = req.body;
-      console.log(updatedBooking);
       const updateDoc = {
         $set: {
-          price: updatedToy.price,
-          quantity: updatedToy.quantity,
-          details: updatedToy.details,
+          price: body.price,
+          quantity: body.quantity,
+          details: body.details,
         },
       };
       const result = await toyCollection.updateOne(filter, updateDoc);
