@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const toyCollection = client.db("toyWorld").collection("toys");
     app.get("/toys", async (req, res) => {
       const limit = 20;
@@ -114,5 +114,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Toy World Server is running on port ${port}`);
+  console.log(`Toy World Server running on port ${port}`);
 });
